@@ -3,6 +3,7 @@ package ru.aleksandrchistov.budget.budget_item;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -27,7 +28,7 @@ public class BudgetItem extends BaseEntity {
 
     @Column(name = "name", nullable = false, length = 256)
     @Size(max = 256)
-    @NotNull
+    @NotBlank
     private String name;
 
     @Column(name = "parent_id")
