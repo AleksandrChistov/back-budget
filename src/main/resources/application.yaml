@@ -1,0 +1,21 @@
+#  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+spring:
+  jpa:
+    show-sql: true
+    open-in-view: false
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 20
+        jdbc.batch_size: 20
+        id.new_generator_mappings: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/budgets
+    username: admin
+    password: 123
+  sql:
+    init:
+      mode: always
