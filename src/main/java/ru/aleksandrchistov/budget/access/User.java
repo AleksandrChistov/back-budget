@@ -23,8 +23,8 @@ import ru.aleksandrchistov.budget.common.model.BaseEntity;
 public class User extends BaseEntity {
 
     @Column(name = "full_name", nullable = false)
-    @NotBlank
     @Size(min = 2, max = 256)
+    @NotBlank
     private String fullName;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -65,4 +65,5 @@ public class User extends BaseEntity {
                 ", role=" + role +
                 '}';
     }
+
 }
