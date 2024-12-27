@@ -91,7 +91,7 @@ public class Transaction extends BaseEntity {
         return "Transaction{" +
                 "id=" + id +
                 ", sum=" + sum +
-                ", budgetType=" + budgetType +
+                ", budgetType=" + budgetType.getText() +
                 ", paymentDate=" + paymentDate +
                 ", description='" + description + '\'' +
                 ", departmentId=" + departmentId +

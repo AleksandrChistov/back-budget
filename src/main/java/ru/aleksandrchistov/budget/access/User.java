@@ -62,7 +62,7 @@ public class User extends BaseEntity {
                 "id='" + id + '\'' +
                 "fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
-                ", role=" + role +
+                ", role=" + role.getText() +
                 '}';
     }
 

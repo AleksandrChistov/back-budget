@@ -13,6 +13,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
+import ru.aleksandrchistov.budget.shared.model.BudgetType;
 
 @Entity
 @Table(name = "budget_item")
@@ -24,7 +25,7 @@ public class BudgetItem extends BaseEntity {
     @Column(name = "type", nullable = false, length = 10)
     @Size(max = 10)
     @NotNull
-    private String type;
+    private BudgetType type;
 
     @Column(name = "name", nullable = false, length = 256)
     @Size(max = 256)
@@ -41,7 +42,7 @@ public class BudgetItem extends BaseEntity {
         this(item.id, item.type, item.name, item.parentId);
     }
 
-    public BudgetItem(Integer id, String type, String name, Integer parentId) {
+    public BudgetItem(Integer id, BudgetType type, String name, Integer parentId) {
         super(id);
         setType(type);
         setName(name);
@@ -52,7 +53,7 @@ public class BudgetItem extends BaseEntity {
     public String toString() {
         return "BudgetItem{" +
                 "id=" + id +
-                ", type='" + type + '\'' +
+                ", type='" + type.getText() + '\'' +
                 ", name='" + name + '\'' +
                 ", parentId=" + parentId +
                 '}';

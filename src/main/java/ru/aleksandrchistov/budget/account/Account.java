@@ -65,7 +65,7 @@ public class Account extends BaseEntity {
         return "Account{" +
                 "id=" + id +
                 ", num=" + num +
-                ", type=" + type +
+                ", type=" + type.getText() +
                 ", balance=" + balance +
                 ", departmentId=" + departmentId +
                 ", name='" + name + '\'' +

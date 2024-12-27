@@ -15,32 +15,32 @@ import ru.aleksandrchistov.budget.common.model.BaseEntity;
 @Entity
 @Table(
         name = "departments",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "label"}, name = "dep_label_unique")}
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "name"}, name = "dep_name_unique")}
 )
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Department extends BaseEntity {
 
-    @Column(name = "label", nullable = false, length = 256)
+    @Column(name = "name", nullable = false, length = 256)
     @Size(max = 256)
     @NotBlank
-    private String label;
+    private String name;
 
     public Department(Department dep) {
-        this(dep.id, dep.label);
+        this(dep.id, dep.name);
     }
 
-    public Department(Integer id, String label) {
+    public Department(Integer id, String name) {
         super(id);
-        setLabel(label);
+        setName(name);
     }
 
     @Override
     public String toString() {
         return "Department{" +
                 "id=" + id +
-                ", label='" + label + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }
