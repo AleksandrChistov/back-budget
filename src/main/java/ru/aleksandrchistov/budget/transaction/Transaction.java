@@ -1,10 +1,7 @@
 package ru.aleksandrchistov.budget.transaction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -13,7 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import ru.aleksandrchistov.budget.account.Account;
+import ru.aleksandrchistov.budget.budget_item.BudgetItem;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
+import ru.aleksandrchistov.budget.counterparty.Counterparty;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,64 +25,61 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Transaction extends BaseEntity {
 
-    @Column(name = "sum", nullable = false)
     @NotNull
+    @Column(name = "sum", nullable = false)
     private BigDecimal sum;
 
-    @Column(name = "type", nullable = false, length = 10)
-    @Size(max = 10)
     @NotNull
+    @Size(max = 10)
+    @Column(name = "type", nullable = false, length = 10)
     private TransactionType type;
 
-    @Column(name = "payment_date", nullable = false)
     @NotNull
+    @Column(name = "payment_date", nullable = false)
     private LocalDate paymentDate;
 
-    @Column(name = "description", nullable = false, length = 256)
-    @Size(max = 256)
     @NotNull
+    @Size(max = 256)
+    @Column(name = "description", nullable = false, length = 256)
     private String description;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "budget_item_id", nullable = false)
+    private BudgetItem budgetItem;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "counterparty_id", nullable = false)
+    private Counterparty counterparty;
 
     @Column(name = "department_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OnDelete(action = OnDeleteAction.SET_DEFAULT)
-    @Min(1)
     private Integer departmentId;
 
-    @Column(name = "account_id", nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Min(1)
-    @NotNull
-    private Integer accountId;
-
-    @Column(name = "budget_item_id", nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Min(1)
-    @NotNull
-    private Integer budgetItemId;
-
-    @Column(name = "counterparty_id", nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Min(1)
-    @NotNull
-    private Integer counterpartyId;
-
     public Transaction(Transaction tr) {
-        this(tr.id, tr.sum, tr.type, tr.paymentDate, tr.description, tr.departmentId, tr.accountId, tr.budgetItemId, tr.counterpartyId);
+        this(tr.id, tr.sum, tr.type, tr.paymentDate, tr.description, tr.account, tr.budgetItem, tr.counterparty, tr.departmentId);
     }
 
     public Transaction(Integer id, BigDecimal sum, TransactionType type,
                        LocalDate paymentDate, String description,
-                       Integer departmentId, Integer accountId, Integer budgetItemId, Integer counterpartyId) {
+                       Account account, BudgetItem budgetItem,
+                       Counterparty counterparty, Integer departmentId) {
         super(id);
         setSum(sum);
         setType(type);
         setPaymentDate(paymentDate);
         setDescription(description);
+        setAccount(account);
+        setBudgetItem(budgetItem);
+        setCounterparty(counterparty);
         setDepartmentId(departmentId);
-        setAccountId(accountId);
-        setBudgetItemId(budgetItemId);
-        setCounterpartyId(counterpartyId);
     }
 
     @Override
@@ -93,10 +90,10 @@ public class Transaction extends BaseEntity {
                 ", type=" + type +
                 ", paymentDate=" + paymentDate +
                 ", description='" + description + '\'' +
+                ", account=" + account +
+                ", budgetItem=" + budgetItem +
+                ", counterparty=" + counterparty +
                 ", departmentId=" + departmentId +
-                ", accountId=" + accountId +
-                ", budgetItemId=" + budgetItemId +
-                ", counterpartyId=" + counterpartyId +
                 '}';
     }
 }
