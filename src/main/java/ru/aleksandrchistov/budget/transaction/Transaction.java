@@ -14,7 +14,6 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
-import ru.aleksandrchistov.budget.shared.model.BudgetType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,10 +29,10 @@ public class Transaction extends BaseEntity {
     @NotNull
     private BigDecimal sum;
 
-    @Column(name = "budget_type", nullable = false, length = 10)
+    @Column(name = "type", nullable = false, length = 10)
     @Size(max = 10)
     @NotNull
-    private BudgetType budgetType;
+    private TransactionType type;
 
     @Column(name = "payment_date", nullable = false)
     @NotNull
@@ -69,15 +68,15 @@ public class Transaction extends BaseEntity {
     private Integer counterpartyId;
 
     public Transaction(Transaction tr) {
-        this(tr.id, tr.sum, tr.budgetType, tr.paymentDate, tr.description, tr.departmentId, tr.accountId, tr.budgetItemId, tr.counterpartyId);
+        this(tr.id, tr.sum, tr.type, tr.paymentDate, tr.description, tr.departmentId, tr.accountId, tr.budgetItemId, tr.counterpartyId);
     }
 
-    public Transaction(Integer id, BigDecimal sum, BudgetType budgetType,
+    public Transaction(Integer id, BigDecimal sum, TransactionType type,
                        LocalDate paymentDate, String description,
                        Integer departmentId, Integer accountId, Integer budgetItemId, Integer counterpartyId) {
         super(id);
         setSum(sum);
-        setBudgetType(budgetType);
+        setType(type);
         setPaymentDate(paymentDate);
         setDescription(description);
         setDepartmentId(departmentId);
@@ -91,7 +90,7 @@ public class Transaction extends BaseEntity {
         return "Transaction{" +
                 "id=" + id +
                 ", sum=" + sum +
-                ", budgetType=" + budgetType.getText() +
+                ", type=" + type +
                 ", paymentDate=" + paymentDate +
                 ", description='" + description + '\'' +
                 ", departmentId=" + departmentId +
