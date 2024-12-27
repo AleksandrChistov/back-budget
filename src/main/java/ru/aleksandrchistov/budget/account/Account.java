@@ -17,7 +17,7 @@ import ru.aleksandrchistov.budget.common.model.BaseEntity;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "account")
+@Table(name = "accounts")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
