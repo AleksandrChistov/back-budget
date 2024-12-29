@@ -22,20 +22,21 @@ import ru.aleksandrchistov.budget.shared.model.BudgetType;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BudgetItem extends BaseEntity {
 
-    @Column(name = "type", nullable = false, length = 10)
-    @Size(max = 10)
     @NotNull
+    @Size(max = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 10)
     private BudgetType type;
 
-    @Column(name = "name", nullable = false, length = 256)
-    @Size(max = 256)
     @NotBlank
+    @Size(max = 256)
+    @Column(name = "name", nullable = false, length = 256)
     private String name;
 
-    @Column(name = "parent_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
     @Min(1)
+    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "parent_id")
     private Integer parentId;
 
     public BudgetItem(BudgetItem item) {
