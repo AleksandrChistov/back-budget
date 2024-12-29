@@ -1,6 +1,5 @@
 package ru.aleksandrchistov.budget.access;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -35,7 +34,6 @@ public class User extends BaseEntity {
 
     @NotBlank
     @Size(max = 256)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 
