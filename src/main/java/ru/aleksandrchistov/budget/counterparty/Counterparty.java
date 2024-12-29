@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
 
+import java.math.BigInteger;
+
 @Entity
 @Table(name = "counterparty")
 @Getter
@@ -26,15 +28,16 @@ public class Counterparty extends BaseEntity {
 
     @Column(name = "inn", nullable = false)
     @NotNull
-    private Integer inn;
+    private BigInteger inn;
 
     public Counterparty(Counterparty cp) {
-        this(cp.id, cp.name);
+        this(cp.id, cp.name, cp.inn);
     }
 
-    public Counterparty(Integer id, String name) {
+    public Counterparty(Integer id, String name, BigInteger inn) {
         super(id);
         setName(name);
+        setInn(inn);
     }
 
     @Override
