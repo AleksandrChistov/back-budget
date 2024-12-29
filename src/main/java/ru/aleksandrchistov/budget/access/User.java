@@ -22,26 +22,26 @@ import ru.aleksandrchistov.budget.common.model.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
-    @Column(name = "full_name", nullable = false)
-    @Size(min = 2, max = 256)
     @NotBlank
+    @Size(min = 2, max = 256)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "email", nullable = false, unique = true)
     @Email
     @NotBlank
     @Size(max = 128)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
     @NotBlank
     @Size(max = 256)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false, length = 10)
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 10)
     private Role role;
 
     public User(User u) {

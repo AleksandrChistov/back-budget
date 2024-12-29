@@ -2,6 +2,7 @@ package ru.aleksandrchistov.budget.transaction;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -30,7 +31,7 @@ public class Transaction extends BaseEntity {
     private BigDecimal sum;
 
     @NotNull
-    @Size(max = 10)
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private TransactionType type;
 
@@ -44,20 +45,21 @@ public class Transaction extends BaseEntity {
     private String description;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "budget_item_id", nullable = false)
     private BudgetItem budgetItem;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "counterparty_id", nullable = false)
     private Counterparty counterparty;
 
+    @Min(1)
     @Column(name = "department_id")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OnDelete(action = OnDeleteAction.SET_DEFAULT)
