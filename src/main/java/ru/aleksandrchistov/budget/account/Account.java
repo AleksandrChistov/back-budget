@@ -15,6 +15,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "accounts")
@@ -23,35 +24,36 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account extends BaseEntity {
 
+    @NotNull
     @Column(name = "num", unique = true, nullable = false)
-    @NotNull
-    private Integer num;
+    private BigInteger num;
 
-    @Column(name = "type", nullable = false, length = 5)
-    @Enumerated(EnumType.STRING)
     @NotNull
+    @Size(max = 5)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 5)
     private AccountType type;
 
-    @Column(name = "balance", nullable = false)
     @NotNull
+    @Column(name = "balance", nullable = false)
     private BigDecimal balance;
 
-    @Column(name = "name", nullable = false)
     @NotBlank
     @Size(max = 256)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "department_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
     @Min(1)
+    @OnDelete(action = OnDeleteAction.SET_DEFAULT)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "department_id")
     private Integer departmentId;
 
     public Account(Account acc) {
         this(acc.id, acc.num, acc.type, acc.balance, acc.name, acc.departmentId);
     }
 
-    public Account(Integer id, Integer num, AccountType type, BigDecimal balance, String name, Integer departmentId) {
+    public Account(Integer id, BigInteger num, AccountType type, BigDecimal balance, String name, Integer departmentId) {
         super(id);
         setNum(num);
         setType(type);
