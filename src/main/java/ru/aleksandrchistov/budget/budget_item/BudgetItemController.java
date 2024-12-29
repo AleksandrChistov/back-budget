@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.aleksandrchistov.budget.shared.model.BudgetType;
+import ru.aleksandrchistov.budget.transaction.TransactionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +27,15 @@ public class BudgetItemController {
     private BudgetItemRepository repository;
 
     @GetMapping
-    public List<BudgetItemDto> getAll(@Nullable @RequestParam BudgetType budgetType) {
+    public List<BudgetItemDto> getAll(
+            @Nullable @RequestParam BudgetType budgetType,
+            @Nullable @RequestParam TransactionType transactionType
+    ) {
         log.info("getAll");
         List<BudgetItem> items;
-        if (budgetType != null) {
+        if (budgetType != null && transactionType != null) {
+            items = repository.getAllByTypeAndTransactionType(budgetType, transactionType);
+        } else if (budgetType != null) {
             items = repository.getAllByType(budgetType);
         } else {
             items = repository.findAll();

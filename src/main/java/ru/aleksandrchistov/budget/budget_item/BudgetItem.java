@@ -14,6 +14,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
 import ru.aleksandrchistov.budget.shared.model.BudgetType;
+import ru.aleksandrchistov.budget.transaction.TransactionType;
 
 @Entity
 @Table(name = "budget_item")
@@ -27,6 +28,13 @@ public class BudgetItem extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private BudgetType type;
+
+    @NotNull
+    @Size(max = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type", nullable = false, length = 10)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private TransactionType transactionType;
 
     @NotBlank
     @Size(max = 256)
