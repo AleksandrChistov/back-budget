@@ -17,6 +17,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static ru.aleksandrchistov.budget.common.validation.RestValidation.checkNew;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200/")
 @RequestMapping(value = AccessController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccessController {
 
