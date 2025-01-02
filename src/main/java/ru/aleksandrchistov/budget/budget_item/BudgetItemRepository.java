@@ -12,6 +12,7 @@ import java.util.List;
 public interface BudgetItemRepository extends BaseRepository<BudgetItem> {
 
     List<BudgetItem> getAllByType(@NotNull BudgetType type);
+    List<BudgetItem> getAllByTypeOrderByIdDesc(@NotNull BudgetType type);
     List<BudgetItem> getAllByTypeAndTransactionType(@NotNull BudgetType type, @NotNull TransactionType transactionType);
 
 }
