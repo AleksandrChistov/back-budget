@@ -1,4 +1,4 @@
-package ru.aleksandrchistov.budget.budget_item;
+package ru.aleksandrchistov.budget.budget.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
@@ -9,33 +9,34 @@ import java.util.List;
 
 @Getter
 @Setter
-public class BudgetItemDto {
+public class BudgetItemDto implements Comparable<BudgetItemDto>{
 
-    private int id;
-
-    private String label;
+    private BudgetDataDto data;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<BudgetItemDto> children;
 
-    public BudgetItemDto(int id, String name) {
-        setId(id);
-        setLabel(name);
+    public BudgetItemDto(BudgetDataDto data) {
+        setData(data);
     }
 
     public void addChild(BudgetItemDto child) {
         if (children == null) {
             children = new ArrayList<>();
         }
-        children.add(child);
+        children.addFirst(child);
     }
 
     @Override
     public String toString() {
         return "BudgetItemDto{" +
-                "id=" + id +
-                ", label='" + label + '\'' +
+                "data=" + data +
                 ", children=" + children +
                 '}';
+    }
+
+    @Override
+    public int compareTo(BudgetItemDto o) {
+        return data.getId().compareTo(o.getData().getId());
     }
 }
