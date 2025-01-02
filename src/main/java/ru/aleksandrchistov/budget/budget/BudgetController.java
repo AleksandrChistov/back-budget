@@ -13,6 +13,7 @@ import ru.aleksandrchistov.budget.budget_item.BudgetItemRepository;
 import ru.aleksandrchistov.budget.shared.model.BudgetType;
 import ru.aleksandrchistov.budget.transaction.Transaction;
 import ru.aleksandrchistov.budget.transaction.TransactionRepository;
+import ru.aleksandrchistov.budget.transaction.TransactionType;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -125,7 +126,7 @@ public class BudgetController {
 
         for (BudgetItem item : items) {
             BudgetDataDto data = planTotals.get(item.id());
-            itemMap.put(item.getId(), new BudgetItemDto(data));
+            itemMap.put(item.getId(), new BudgetItemDto(data, item.getTransactionType()));
         }
 
         for (BudgetItem item : items) {
@@ -162,22 +163,26 @@ public class BudgetController {
 
         for (BudgetItemDto item : items) {
             BudgetDataDto data = item.getData();
-            totals.setActualTotal(totals.getActualTotal().add(data.getActualTotal()));
-            totals.setPlanTotal(totals.getPlanTotal().add(data.getPlanTotal()));
+            BigDecimal actualTotal = getSum(totals.getActualTotal(), getSignedNumber(data.getActualTotal(), item.getType(), budgetType));
+            BigDecimal planTotal = getSum(totals.getPlanTotal(), getSignedNumber(data.getPlanTotal(), item.getType(), budgetType));
+            totals.setActualTotal(actualTotal);
+            totals.setPlanTotal(planTotal);
 
             BudgetDataMonthDto[] months = data.getMonths();
 
             for (int i = 0; i < months.length; i++) {
                 BudgetDataMonthDto month = new BudgetDataMonthDto();
                 month.setIndex(months[i].getIndex());
-                month.setActual(months[i].getActual().add(month.getActual() != null ? month.getActual() : BigDecimal.valueOf(0)));
-                month.setPlan(months[i].getPlan().add(month.getPlan() != null ? month.getPlan() : BigDecimal.valueOf(0)));
+                month.setActual(getSignedNumber(months[i].getActual(), item.getType(), budgetType));
+                month.setPlan(getSignedNumber(months[i].getPlan(), item.getType(), budgetType));
 
                 if (totalMonths[i] == null) {
                     totalMonths[i] = month;
                 } else {
-                    totalMonths[i].setActual(totalMonths[i].getActual().add(month.getActual()));
-                    totalMonths[i].setPlan(totalMonths[i].getPlan().add(month.getPlan()));
+                    BigDecimal actual = getSum(totalMonths[i].getActual(), month.getActual());
+                    BigDecimal plan = getSum(totalMonths[i].getPlan(), month.getPlan());
+                    totalMonths[i].setActual(actual);
+                    totalMonths[i].setPlan(plan);
                 }
             }
         }
@@ -187,6 +192,17 @@ public class BudgetController {
         Collections.sort(items);
 
         return new BudgetDto(items, totals);
+    }
+
+    private BigDecimal getSum(BigDecimal a, BigDecimal b) {
+        return a.add(b);
+    }
+
+    private BigDecimal getSignedNumber(BigDecimal sum, TransactionType type, BudgetType budgetType) {
+        if (budgetType == BudgetType.EXPENSES) {
+            return sum;
+        }
+        return type == TransactionType.EXPENSE ? sum.negate() : sum;
     }
 
 }
