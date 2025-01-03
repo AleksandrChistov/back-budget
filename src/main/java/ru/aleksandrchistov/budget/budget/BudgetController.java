@@ -14,6 +14,7 @@ import ru.aleksandrchistov.budget.budget.dto.BudgetDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetItemDto;
 import ru.aleksandrchistov.budget.budget_item.BudgetItem;
 import ru.aleksandrchistov.budget.budget_item.BudgetItemRepository;
+import ru.aleksandrchistov.budget.common.error.NotFoundException;
 import ru.aleksandrchistov.budget.shared.model.BudgetType;
 import ru.aleksandrchistov.budget.transaction.Transaction;
 import ru.aleksandrchistov.budget.transaction.TransactionRepository;
@@ -99,6 +100,15 @@ public class BudgetController {
         planRepository.saveAll(plans);
 
         return new ResponseEntity<>(newBudget.getId(), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id) {
+        log.info("delete {}", id);
+        if (repository.delete(id) == 0) {
+            throw new NotFoundException("Entity with id=" + id + " not found");
+        }
     }
 
 }
