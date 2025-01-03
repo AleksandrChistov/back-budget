@@ -91,7 +91,6 @@ public class GetBudgetUtility {
                     BudgetItemDto parent = itemMap.get(item.getParentId());
                     BudgetItemDto child = itemMap.get(item.getId());
                     parent.getData().setActualTotal(parent.getData().getActualTotal().add(child.getData().getActualTotal()));
-                    parent.getData().setPlanTotal(parent.getData().getPlanTotal().add(child.getData().getPlanTotal()));
                     BudgetDataMonthDto[] parentDataMonths = parent.getData().getMonths();
                     BudgetDataMonthDto[] childDataMonths = child.getData().getMonths();
                     for (int i = 0; i < parentDataMonths.length; i++) {
