@@ -1,8 +1,13 @@
 package ru.aleksandrchistov.budget.budget;
 
+import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDataDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDto;
@@ -14,11 +19,14 @@ import ru.aleksandrchistov.budget.transaction.Transaction;
 import ru.aleksandrchistov.budget.transaction.TransactionRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static ru.aleksandrchistov.budget.budget.BudgetUtility.*;
+import static ru.aleksandrchistov.budget.budget.CreateBudgetUtility.getPlansFromDto;
+import static ru.aleksandrchistov.budget.budget.GetBudgetUtility.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
@@ -41,9 +49,16 @@ public class BudgetController {
     private BudgetPlanRepository planRepository;
 
     @GetMapping(path = "/names")
-    public List<Budget> getNames(@RequestParam BudgetType type) {
+    public List<Budget> getNames(@RequestParam BudgetType type, @Nullable @RequestParam Integer departmentId) {
         log.info("getNames");
-        return repository.getAllByType(type);
+        if (departmentId == null) {
+            return repository.getAllByType(type);
+        }
+        List<Budget> budgets = repository.getAllByTypeAndDepartmentId(type, departmentId);
+        if (budgets.isEmpty()) {
+            return repository.getAllByTypeAndId(type, DefaultBudgetId.fromConst(type));
+        }
+        return budgets;
     }
 
     @GetMapping
@@ -64,6 +79,26 @@ public class BudgetController {
         return budgetDto(itemDtos, type);
     }
 
+    @Transactional
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> create(@Valid @RequestBody BudgetDto budgetDto) {
+        log.info("create {}", budgetDto);
+        List<Budget> budgets = repository.getAllByTypeAndDepartmentId(budgetDto.getType(), budgetDto.getDepartmentId());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        Budget newBudget = new Budget(
+                null,
+                "Версия №" + (budgets.size() + 1) + " от " + LocalDate.now().format(formatter),
+                budgetDto.getType(),
+                budgetDto.getDepartmentId()
+        );
+
+        Budget createdBudget = repository.save(newBudget);
+        List<BudgetMonth> plans = getPlansFromDto(budgetDto, createdBudget.getId(), itemRepository);
+
+        planRepository.saveAll(plans);
+
+        return new ResponseEntity<>(newBudget.getId(), HttpStatus.CREATED);
+    }
 
 }

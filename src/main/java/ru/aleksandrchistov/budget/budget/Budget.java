@@ -28,7 +28,6 @@ public class Budget extends BaseEntity {
     private String name;
 
     @NotNull
-    @Size(max = 10)
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 10)
     private BudgetType type;

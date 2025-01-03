@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @UtilityClass
-public class BudgetUtility {
+public class GetBudgetUtility {
 
     public static HashMap<Integer, BigDecimal[]> getTransactionMonths(List<Transaction> transactions) {
         HashMap<Integer, BigDecimal[]> transactionMonths = new HashMap<>();
@@ -43,7 +43,8 @@ public class BudgetUtility {
                         budgetMonth.getId(),
                         budgetMonth.getIndex(),
                         actualMonthSum != null ? actualMonthSum : BigDecimal.valueOf(0),
-                        budgetMonth.getSum()
+                        budgetMonth.getSum(),
+                        budgetMonth.getBudgetItem().getId()
                 );
                 if (planMonths.containsKey(budgetMonth.getBudgetItem().getId())) {
                     BudgetDataMonthDto[] months = planMonths.get(budgetMonth.getBudgetItem().getId());
@@ -127,6 +128,7 @@ public class BudgetUtility {
                 month.setIndex(months[i].getIndex());
                 month.setActual(getSignedNumber(months[i].getActual(), item.getType(), budgetType));
                 month.setPlan(getSignedNumber(months[i].getPlan(), item.getType(), budgetType));
+                month.setBudgetItemId(months[i].getBudgetItemId());
 
                 if (totalMonths[i] == null) {
                     totalMonths[i] = month;
@@ -143,7 +145,7 @@ public class BudgetUtility {
 
         Collections.sort(items);
 
-        return new BudgetDto(items, totals);
+        return new BudgetDto(items, totals, budgetType);
     }
 
     private static BigDecimal getSum(BigDecimal a, BigDecimal b) {

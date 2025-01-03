@@ -15,12 +15,14 @@ public class BudgetDataMonthDto {
     private Byte index;
     private BigDecimal actual;
     private BigDecimal plan;
+    private int budgetItemId;
 
-    public BudgetDataMonthDto(int id, Byte index, BigDecimal actual, BigDecimal plan) {
+    public BudgetDataMonthDto(int id, Byte index, BigDecimal actual, BigDecimal plan, int budgetItemId) {
         setId(id);
         setIndex(index);
         setActual(actual);
         setPlan(plan);
+        setBudgetItemId(budgetItemId);
     }
 
     @Override
@@ -30,6 +32,7 @@ public class BudgetDataMonthDto {
                 ", index=" + index +
                 ", actual=" + actual +
                 ", plan=" + plan +
+                ", budgetItemId=" + budgetItemId +
                 '}';
     }
 }
