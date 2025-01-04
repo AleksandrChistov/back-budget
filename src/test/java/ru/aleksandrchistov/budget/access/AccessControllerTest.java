@@ -7,13 +7,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.aleksandrchistov.budget.AbstractControllerTest;
 import ru.aleksandrchistov.budget.common.util.JsonUtil;
+import ru.aleksandrchistov.budget.pages.access.AccessRepository;
+import ru.aleksandrchistov.budget.pages.access.Role;
+import ru.aleksandrchistov.budget.pages.access.User;
 
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.aleksandrchistov.budget.access.AccessController.REST_URL;
+import static ru.aleksandrchistov.budget.pages.access.AccessController.REST_URL;
 import static ru.aleksandrchistov.budget.access.AccessTestData.*;
 
 class AccessControllerTest extends AbstractControllerTest {

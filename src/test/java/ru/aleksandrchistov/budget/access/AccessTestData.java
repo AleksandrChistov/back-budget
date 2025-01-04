@@ -2,6 +2,8 @@ package ru.aleksandrchistov.budget.access;
 
 import ru.aleksandrchistov.budget.MatcherFactory;
 import ru.aleksandrchistov.budget.common.util.JsonUtil;
+import ru.aleksandrchistov.budget.pages.access.Role;
+import ru.aleksandrchistov.budget.pages.access.User;
 
 public class AccessTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "password");
