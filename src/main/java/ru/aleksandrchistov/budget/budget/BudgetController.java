@@ -109,6 +109,7 @@ public class BudgetController {
         if (repository.delete(id) == 0) {
             throw new NotFoundException("Entity with id=" + id + " not found");
         }
+        planRepository.deleteByBudgetId(id);
     }
 
 }
