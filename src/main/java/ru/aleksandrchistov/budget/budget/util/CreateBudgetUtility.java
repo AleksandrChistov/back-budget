@@ -1,6 +1,7 @@
-package ru.aleksandrchistov.budget.budget;
+package ru.aleksandrchistov.budget.budget.util;
 
 import lombok.experimental.UtilityClass;
+import ru.aleksandrchistov.budget.budget.model.BudgetMonth;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDataDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDataMonthDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDto;

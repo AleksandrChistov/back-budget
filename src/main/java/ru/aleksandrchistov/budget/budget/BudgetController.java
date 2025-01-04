@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDataDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetDto;
 import ru.aleksandrchistov.budget.budget.dto.BudgetItemDto;
+import ru.aleksandrchistov.budget.budget.model.Budget;
+import ru.aleksandrchistov.budget.budget.model.BudgetMonth;
 import ru.aleksandrchistov.budget.budget_item.BudgetItem;
 import ru.aleksandrchistov.budget.budget_item.BudgetItemRepository;
 import ru.aleksandrchistov.budget.common.error.NotFoundException;
@@ -26,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static ru.aleksandrchistov.budget.budget.CreateBudgetUtility.getPlansFromDto;
-import static ru.aleksandrchistov.budget.budget.GetBudgetUtility.*;
+import static ru.aleksandrchistov.budget.budget.util.CreateBudgetUtility.getPlansFromDto;
+import static ru.aleksandrchistov.budget.budget.util.GetBudgetUtility.*;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")

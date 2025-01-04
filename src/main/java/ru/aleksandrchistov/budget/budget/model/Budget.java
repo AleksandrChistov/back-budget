@@ -1,4 +1,4 @@
-package ru.aleksandrchistov.budget.budget;
+package ru.aleksandrchistov.budget.budget.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;

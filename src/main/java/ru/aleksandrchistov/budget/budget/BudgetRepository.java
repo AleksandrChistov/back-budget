@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.transaction.annotation.Transactional;
+import ru.aleksandrchistov.budget.budget.model.Budget;
 import ru.aleksandrchistov.budget.common.BaseRepository;
 import ru.aleksandrchistov.budget.shared.model.BudgetType;
 

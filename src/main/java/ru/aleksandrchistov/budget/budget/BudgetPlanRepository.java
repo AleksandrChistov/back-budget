@@ -3,6 +3,7 @@ package ru.aleksandrchistov.budget.budget;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
+import ru.aleksandrchistov.budget.budget.model.BudgetMonth;
 import ru.aleksandrchistov.budget.common.BaseRepository;
 
 import java.util.List;
