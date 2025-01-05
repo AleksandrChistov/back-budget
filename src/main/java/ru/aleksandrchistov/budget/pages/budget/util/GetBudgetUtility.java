@@ -107,7 +107,7 @@ public class GetBudgetUtility {
         return rootItems;
     }
 
-    public static BudgetDto budgetDto(List<BudgetItemDto> items, BudgetType budgetType) {
+    public static BudgetDto budgetDto(List<BudgetItemDto> items, BudgetType budgetType, Integer budgetId) {
         BudgetDataDto totals = new BudgetDataDto();
         totals.setName("Итого " + budgetType.getText().toLowerCase());
         totals.setActualTotal(BigDecimal.valueOf(0));
@@ -145,7 +145,7 @@ public class GetBudgetUtility {
 
         Collections.sort(items);
 
-        return new BudgetDto(items, totals);
+        return new BudgetDto(budgetId, items, totals);
     }
 
     private static BigDecimal getSum(BigDecimal a, BigDecimal b) {

@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import ru.aleksandrchistov.budget.common.error.NotFoundException;
 import ru.aleksandrchistov.budget.pages.budget.dto.BudgetDataDto;
 import ru.aleksandrchistov.budget.pages.budget.dto.BudgetDto;
 import ru.aleksandrchistov.budget.pages.budget.dto.BudgetItemDto;
@@ -16,10 +17,9 @@ import ru.aleksandrchistov.budget.pages.budget.model.Budget;
 import ru.aleksandrchistov.budget.pages.budget.model.BudgetMonth;
 import ru.aleksandrchistov.budget.pages.budget_item.BudgetItem;
 import ru.aleksandrchistov.budget.pages.budget_item.BudgetItemRepository;
-import ru.aleksandrchistov.budget.common.error.NotFoundException;
-import ru.aleksandrchistov.budget.shared.model.BudgetType;
 import ru.aleksandrchistov.budget.pages.transaction.Transaction;
 import ru.aleksandrchistov.budget.pages.transaction.TransactionRepository;
+import ru.aleksandrchistov.budget.shared.model.BudgetType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
-import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getPlansFromDto;
+import static ru.aleksandrchistov.budget.common.validation.RestValidation.assureIdConsistent;
+import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getNewPlansFromDto;
+import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getUpdatedBudgetMonths;
 import static ru.aleksandrchistov.budget.pages.budget.util.GetBudgetUtility.*;
 
 @RestController
@@ -75,15 +77,14 @@ public class BudgetController {
         HashMap<Integer, BudgetDataDto> planDtos = getPlanDtos(plans, transactionMonths);
 
         List<BudgetItemDto> itemDtos = getItemDtos(items, planDtos);
-        return budgetDto(itemDtos, type);
+        return budgetDto(itemDtos, type, budgetId);
     }
-
-    // TODO: implement method for update budget
 
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> create(@Valid @RequestBody BudgetDto budgetDto) {
         log.info("create {}", budgetDto);
+        // TODO: check where we pass departmentId ?
         List<Budget> budgets = repository.getAllByDepartmentId(budgetDto.getDepartmentId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -94,11 +95,25 @@ public class BudgetController {
         );
 
         Budget createdBudget = repository.save(newBudget);
-        List<BudgetMonth> plans = getPlansFromDto(budgetDto, createdBudget.getId(), itemRepository);
+        List<BudgetMonth> plans = getNewPlansFromDto(budgetDto, createdBudget.getId(), itemRepository);
 
         planRepository.saveAll(plans);
 
         return new ResponseEntity<>(newBudget.getId(), HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/{budgetId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@Valid @RequestBody BudgetDto budgetDto, @PathVariable int budgetId) {
+        log.info("update {} with budgetId={}", budgetDto, budgetId);
+        assureIdConsistent(budgetDto, budgetId);
+
+        List<BudgetItemDto> items = budgetDto.getBudgetItems();
+        List<BudgetMonth> plans = planRepository.getAllByBudgetId(budgetId);
+
+        List<BudgetMonth> updatedPlans = getUpdatedBudgetMonths(items, plans);
+
+        planRepository.saveAll(updatedPlans);
     }
 
     @DeleteMapping("/{id}")
