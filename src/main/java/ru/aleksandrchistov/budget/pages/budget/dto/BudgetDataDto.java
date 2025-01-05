@@ -29,7 +29,7 @@ public class BudgetDataDto {
 
     @Override
     public String toString() {
-        return "BudgetItemDto{" +
+        return "BudgetDataDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", actualTotal=" + actualTotal +

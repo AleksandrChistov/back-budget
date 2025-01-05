@@ -27,7 +27,7 @@ public class BudgetDataMonthDto {
 
     @Override
     public String toString() {
-        return "BudgetItemDto{" +
+        return "BudgetDataMonthDto{" +
                 "id=" + id +
                 ", index=" + index +
                 ", actual=" + actual +

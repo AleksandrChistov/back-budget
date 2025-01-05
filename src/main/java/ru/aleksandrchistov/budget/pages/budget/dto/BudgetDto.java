@@ -26,7 +26,7 @@ public class BudgetDto {
 
     @Override
     public String toString() {
-        return "BudgetItemDto{" +
+        return "BudgetDto{" +
                 "budgetItems=" + budgetItems +
                 ", totals=" + totals +
                 ", type=" + type +

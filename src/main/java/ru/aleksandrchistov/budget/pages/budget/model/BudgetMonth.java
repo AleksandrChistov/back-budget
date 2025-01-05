@@ -53,7 +53,7 @@ public class BudgetMonth extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Account{" +
+        return "BudgetMonth{" +
                 "id=" + id +
                 ", index=" + index +
                 ", sum=" + sum +

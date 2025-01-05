@@ -53,6 +53,7 @@ public class BudgetController {
 
     @GetMapping(path = "/names")
     public List<Budget> getNames(@RequestParam BudgetType type, @Nullable @RequestParam Integer departmentId) {
+        // TODO: Remove type from budget in DB
         log.info("getNames");
         if (departmentId == null) {
             return repository.getAllByType(type);
@@ -82,10 +83,13 @@ public class BudgetController {
         return budgetDto(itemDtos, type);
     }
 
+    // TODO: implement method for update budget
+
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> create(@Valid @RequestBody BudgetDto budgetDto) {
         log.info("create {}", budgetDto);
+        // TODO: Remove type from BudgetDto
         List<Budget> budgets = repository.getAllByTypeAndDepartmentId(budgetDto.getType(), budgetDto.getDepartmentId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");

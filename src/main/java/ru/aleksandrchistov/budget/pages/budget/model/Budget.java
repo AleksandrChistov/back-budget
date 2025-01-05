@@ -51,7 +51,7 @@ public class Budget extends BaseEntity {
 
     @Override
     public String toString() {
-        return "Account{" +
+        return "Budget{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", type=" + type.getText() +
