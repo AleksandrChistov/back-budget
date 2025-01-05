@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.aleksandrchistov.budget.pages.report.ReportUtility.*;
@@ -38,7 +39,7 @@ public class ReportController {
 
     @GetMapping
     public ReportDto getAll(@RequestParam TransactionType type, @Nullable @RequestParam Integer departmentId, @Nullable @RequestParam Integer budgetId) {
-        log.info("getAll");
+        log.info("getAll {}, {}, {}", type, departmentId, budgetId);
         List<Transaction> transactions;
         if (departmentId != null) {
             transactions = transactionRepository.getAllByDepartmentId(departmentId);
@@ -49,53 +50,51 @@ public class ReportController {
         // Транзакции (actual) по статье бюджета по месяцам
         Map<Integer, BigDecimal[]> transactionMonths = getTransactionMonths(transactions);
 
-        BigDecimal[] operProfitActual = calcOperProfit(transactionMonths);
-        BigDecimal[] ebitdaActual = calcEbitda(transactionMonths);
-        BigDecimal[] finProfitActual = calcFinProfit(transactionMonths);
-        BigDecimal[] netProfitActual = calcNetProfit(transactionMonths);
-
-        List<BudgetMonth> plans = planRepository.getAllByBudgetId(budgetId);
+        List<BudgetMonth> planMoths = planRepository.getAllByBudgetId(budgetId);
         // Планы (plan) по статье бюджета по месяцам
-        Map<Integer, BigDecimal[]> planDtos = getPlanMonths(plans);
-
-        BigDecimal[] operProfitPlan = calcOperProfit(planDtos);
-        BigDecimal[] ebitdaPlan = calcEbitda(planDtos);
-        BigDecimal[] finProfitPlan = calcFinProfit(planDtos);
-        BigDecimal[] netProfitPlan = calcNetProfit(planDtos);
+        Map<Integer, BigDecimal[]> planDtos = getPlanMonths(planMoths);
 
         if (type == TransactionType.INCOME) {
-            TotalMonthDto operProfitTotal = getTotalDto("Операционная прибыль", operProfitPlan, operProfitActual);
-            TotalMonthDto ebitdaTotal = getTotalDto("EBITDA", ebitdaPlan, ebitdaActual);
-            TotalMonthDto finProfitTotal = getTotalDto("Прибыль до налогов", finProfitPlan, finProfitActual);
-            TotalMonthDto netProfitTotal = getTotalDto("Чистая прибыль", netProfitPlan, netProfitActual);
+            String[] titles = new String[]{"Операционная прибыль", "EBITDA", "Прибыль до налогов", "Чистая прибыль"};
+            BigDecimal[][] plans = calcProfits(planDtos);
+            BigDecimal[][] actuals = calcProfits(transactionMonths);
 
-            ReportMonthDto operProfitReport = new ReportMonthDto("Операционная прибыль", operProfitPlan, operProfitActual);
-            ReportMonthDto ebitdaReport = new ReportMonthDto("EBITDA", ebitdaPlan, ebitdaActual);
-            ReportMonthDto finProfitReport = new ReportMonthDto("Прибыль до налогов", finProfitPlan, finProfitActual);
-            ReportMonthDto netProfitReport = new ReportMonthDto("Чистая прибыль", netProfitPlan, netProfitActual);
+            TotalMonthDto operProfitTotal = getTotalDto(titles[0], plans[0], actuals[0]);
+            TotalMonthDto ebitdaTotal = getTotalDto(titles[1], plans[1], actuals[1]);
+            TotalMonthDto finProfitTotal = getTotalDto(titles[2], plans[2], actuals[2]);
+            TotalMonthDto netProfitTotal = getTotalDto(titles[3], plans[3], actuals[3]);
 
-            TotalMonthDto[] totals = new TotalMonthDto[]{operProfitTotal, ebitdaTotal, finProfitTotal, netProfitTotal};
-            ReportMonthDto[] reports = new ReportMonthDto[]{operProfitReport, ebitdaReport, finProfitReport, netProfitReport};
-
-            return new ReportDto(totals, reports);
-        } else {
-            // TODO: implement calculations for expenses reports
-            // Все EXPENSE не вычитаем, а складываем?
-            TotalMonthDto operProfitTotal = getTotalDto("Операционные расходы", operProfitPlan, operProfitActual);
-            TotalMonthDto ebitdaTotal = getTotalDto("Оплата труда", ebitdaPlan, ebitdaActual);
-            TotalMonthDto finProfitTotal = getTotalDto("Налоги", finProfitPlan, finProfitActual);
-            TotalMonthDto netProfitTotal = getTotalDto("Проценты к уплате", netProfitPlan, netProfitActual);
-
-            ReportMonthDto operProfitReport = new ReportMonthDto("Операционные расходы", operProfitPlan, operProfitActual);
-            ReportMonthDto ebitdaReport = new ReportMonthDto("Оплата труда", ebitdaPlan, ebitdaActual);
-            ReportMonthDto finProfitReport = new ReportMonthDto("Налоги", finProfitPlan, finProfitActual);
-            ReportMonthDto netProfitReport = new ReportMonthDto("Проценты к уплате", netProfitPlan, netProfitActual);
+            ReportMonthDto operProfitReport = new ReportMonthDto(titles[0], plans[0], actuals[0]);
+            ReportMonthDto ebitdaReport = new ReportMonthDto(titles[1], plans[1], actuals[1]);
+            ReportMonthDto finProfitReport = new ReportMonthDto(titles[2], plans[2], actuals[2]);
+            ReportMonthDto netProfitReport = new ReportMonthDto(titles[3], plans[3], actuals[3]);
 
             TotalMonthDto[] totals = new TotalMonthDto[]{operProfitTotal, ebitdaTotal, finProfitTotal, netProfitTotal};
             ReportMonthDto[] reports = new ReportMonthDto[]{operProfitReport, ebitdaReport, finProfitReport, netProfitReport};
 
             return new ReportDto(totals, reports);
         }
+
+        // TODO: implement calculations for expenses reports
+        // Все EXPENSE не вычитаем, а складываем?
+        String[] titles = new String[]{"Операционные расходы", "Оплата труда", "Налоги", "Проценты к уплате"};
+        BigDecimal[][] plans = calcProfits(planDtos);
+        BigDecimal[][] actuals = calcProfits(transactionMonths);
+
+        TotalMonthDto operProfitTotal = getTotalDto(titles[0], plans[0], actuals[0]);
+        TotalMonthDto ebitdaTotal = getTotalDto(titles[1], plans[1], actuals[1]);
+        TotalMonthDto finProfitTotal = getTotalDto(titles[2], plans[2], actuals[2]);
+        TotalMonthDto netProfitTotal = getTotalDto(titles[3], plans[3], actuals[3]);
+
+        ReportMonthDto operProfitReport = new ReportMonthDto(titles[0], plans[0], actuals[0]);
+        ReportMonthDto ebitdaReport = new ReportMonthDto(titles[1], plans[1], actuals[1]);
+        ReportMonthDto finProfitReport = new ReportMonthDto(titles[2], plans[2], actuals[2]);
+        ReportMonthDto netProfitReport = new ReportMonthDto(titles[3], plans[3], actuals[3]);
+
+        TotalMonthDto[] totals = new TotalMonthDto[]{operProfitTotal, ebitdaTotal, finProfitTotal, netProfitTotal};
+        ReportMonthDto[] reports = new ReportMonthDto[]{operProfitReport, ebitdaReport, finProfitReport, netProfitReport};
+
+        return new ReportDto(totals, reports);
 
         /*
         * Если type == TransactionTypes.EXPENSE, тогда формируем четыре объекта
@@ -119,132 +118,80 @@ BudgetType.CAPITAL (61-63 и 67-69)
 //        return budgetDto(itemDtos, type);
     }
 
-    // TODO: get rid of duplicates
-    private BigDecimal[] calcOperProfit(Map<Integer, BigDecimal[]> items) {
-        BigDecimal[] operProfits = new BigDecimal[12];
-        Arrays.fill(operProfits, BigDecimal.ZERO);
+    private BigDecimal[][] calcProfits(Map<Integer, BigDecimal[]> months) {
+        BigDecimal[] operProfit = calcProfit(
+                months,
+                transaction -> (transaction.getKey() > 0 && transaction.getKey() < 21),
+                transaction -> (transaction.getKey() > 26 && transaction.getKey() < 40)
+        );
 
-        items.entrySet().stream()
-                .filter(transaction -> (transaction.getKey() > 0 && transaction.getKey() < 21))
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal profit = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].add(profit);
-                    }
-                });
-
-        items.entrySet().stream()
-                .filter(transaction -> (transaction.getKey() > 26 && transaction.getKey() < 40))
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal expense = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].subtract(expense);
-                    }
-                });
-
-        return operProfits;
-    }
-
-    private BigDecimal[] calcEbitda(Map<Integer, BigDecimal[]> transactions) {
-        BigDecimal[] operProfits = new BigDecimal[12];
-        Arrays.fill(operProfits, BigDecimal.ZERO);
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+        BigDecimal[] ebitda = calcProfit(
+                months,
+                transaction ->
                         (transaction.getKey() > 0 && transaction.getKey() < 26) ||
                                 (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67)
-                )
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal profit = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].add(profit);
-                    }
-                });
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                transaction ->
                         (transaction.getKey() > 26 && transaction.getKey() < 32) ||
                                 (transaction.getKey() > 32 && transaction.getKey() < 40) ||
                                 (transaction.getKey() > 39 && transaction.getKey() < 49) ||
                                 (transaction.getKey() > 66 && transaction.getKey() < 70)
-                )
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal expense = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].subtract(expense);
-                    }
-                });
+        );
 
-        return operProfits;
-    }
-
-    private BigDecimal[] calcFinProfit(Map<Integer, BigDecimal[]> transactions) {
-        BigDecimal[] operProfits = new BigDecimal[12];
-        Arrays.fill(operProfits, BigDecimal.ZERO);
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+        BigDecimal[] finProfit = calcProfit(
+                months,
+                transaction ->
                         (transaction.getKey() > 0 && transaction.getKey() < 26) ||
                                 (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67)
-                )
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal profit = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].add(profit);
-                    }
-                });
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                transaction ->
                         (transaction.getKey() > 26 && transaction.getKey() < 40) ||
                                 (transaction.getKey() > 39 && transaction.getKey() < 49) ||
                                 (transaction.getKey() > 60 && transaction.getKey() < 64) ||
                                 (transaction.getKey() > 66 && transaction.getKey() < 70)
-                )
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal expense = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].subtract(expense);
-                    }
-                });
+        );
 
-        return operProfits;
-    }
-
-    private BigDecimal[] calcNetProfit(Map<Integer, BigDecimal[]> transactions) {
-        BigDecimal[] operProfits = new BigDecimal[12];
-        Arrays.fill(operProfits, BigDecimal.ZERO);
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+        BigDecimal[] netProfit = calcProfit(
+                months,
+                transaction ->
                         (transaction.getKey() > 0 && transaction.getKey() < 26) ||
                                 (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67)
-                )
-                .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal profit = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].add(profit);
-                    }
-                });
-
-        transactions.entrySet().stream()
-                .filter(transaction ->
+                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                transaction ->
                         (transaction.getKey() > 25 && transaction.getKey() < 40) ||
                                 (transaction.getKey() > 39 && transaction.getKey() < 49) ||
                                 (transaction.getKey() > 60 && transaction.getKey() < 64) ||
                                 (transaction.getKey() > 66 && transaction.getKey() < 70)
-                )
+        );
+
+        return new BigDecimal[][] {operProfit, ebitda, finProfit, netProfit};
+    }
+
+    private BigDecimal[] calcProfit(
+            Map<Integer, BigDecimal[]> items,
+            Predicate<Map.Entry<Integer, BigDecimal[]>> filterProfit,
+            Predicate<Map.Entry<Integer, BigDecimal[]>> filterExpenses
+    ) {
+        BigDecimal[] profits = new BigDecimal[12];
+        Arrays.fill(profits, BigDecimal.ZERO);
+
+        items.entrySet().stream().filter(filterProfit)
                 .forEach(transaction -> {
-                    for (int i = 0; i < operProfits.length; i++) {
-                        BigDecimal expense = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
-                        operProfits[i] = operProfits[i].subtract(expense);
+                    for (int i = 0; i < profits.length; i++) {
+                        BigDecimal profit = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
+                        profits[i] = profits[i].add(profit);
                     }
                 });
 
-        return operProfits;
+        items.entrySet().stream().filter(filterExpenses)
+                .forEach(transaction -> {
+                    for (int i = 0; i < profits.length; i++) {
+                        BigDecimal expense = transaction.getValue()[i] != null ? transaction.getValue()[i] : BigDecimal.ZERO;
+                        profits[i] = profits[i].subtract(expense);
+                    }
+                });
+
+        return profits;
     }
 
 }
