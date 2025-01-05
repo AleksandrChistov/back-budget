@@ -2,7 +2,6 @@ package ru.aleksandrchistov.budget.pages.budget.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.aleksandrchistov.budget.shared.model.BudgetType;
 
 import java.util.List;
 
@@ -14,14 +13,11 @@ public class BudgetDto {
 
     private BudgetDataDto totals;
 
-    private BudgetType type;
-
     private Integer departmentId;
 
-    public BudgetDto(List<BudgetItemDto> budgetItems, BudgetDataDto totals, BudgetType type) {
+    public BudgetDto(List<BudgetItemDto> budgetItems, BudgetDataDto totals) {
         setBudgetItems(budgetItems);
         setTotals(totals);
-        setType(type);
     }
 
     @Override
@@ -29,7 +25,6 @@ public class BudgetDto {
         return "BudgetDto{" +
                 "budgetItems=" + budgetItems +
                 ", totals=" + totals +
-                ", type=" + type +
                 ", departmentId=" + departmentId +
                 '}';
     }

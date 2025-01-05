@@ -145,7 +145,7 @@ public class GetBudgetUtility {
 
         Collections.sort(items);
 
-        return new BudgetDto(items, totals, budgetType);
+        return new BudgetDto(items, totals);
     }
 
     private static BigDecimal getSum(BigDecimal a, BigDecimal b) {

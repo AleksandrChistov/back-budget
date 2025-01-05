@@ -52,17 +52,12 @@ public class BudgetController {
     private BudgetPlanRepository planRepository;
 
     @GetMapping(path = "/names")
-    public List<Budget> getNames(@RequestParam BudgetType type, @Nullable @RequestParam Integer departmentId) {
-        // TODO: Remove type from budget in DB
+    public List<Budget> getNames(@Nullable @RequestParam Integer departmentId) {
         log.info("getNames");
         if (departmentId == null) {
-            return repository.getAllByType(type);
+            return repository.findAll();
         }
-        List<Budget> budgets = repository.getAllByTypeAndDepartmentId(type, departmentId);
-        if (budgets.isEmpty()) {
-            return repository.getAllByTypeAndId(type, DefaultBudgetId.fromConst(type));
-        }
-        return budgets;
+        return repository.getAllByDepartmentId(departmentId);
     }
 
     @GetMapping
@@ -89,14 +84,12 @@ public class BudgetController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> create(@Valid @RequestBody BudgetDto budgetDto) {
         log.info("create {}", budgetDto);
-        // TODO: Remove type from BudgetDto
-        List<Budget> budgets = repository.getAllByTypeAndDepartmentId(budgetDto.getType(), budgetDto.getDepartmentId());
+        List<Budget> budgets = repository.getAllByDepartmentId(budgetDto.getDepartmentId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         Budget newBudget = new Budget(
                 null,
                 "Версия №" + (budgets.size() + 1) + " от " + LocalDate.now().format(formatter),
-                budgetDto.getType(),
                 budgetDto.getDepartmentId()
         );
 
