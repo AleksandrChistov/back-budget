@@ -10,4 +10,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface BudgetRepository extends BaseRepository<Budget> {
     List<Budget> getAllByDepartmentId(@Min(1) Integer departmentId);
+
+    List<Budget> findAllByYear(int year);
+
+    List<Budget> getAllByYearAndDepartmentId(int year, @Min(1) Integer departmentId);
 }

@@ -34,14 +34,19 @@ public class ReportController {
     private BudgetPlanRepository planRepository;
 
     @GetMapping
-    public ReportDto getAll(@RequestParam TransactionType type, @Nullable @RequestParam Integer departmentId, @Nullable @RequestParam Integer budgetId) {
-        log.info("getAll {}, {}, {}", type, departmentId, budgetId);
+    public ReportDto getAll(
+            @RequestParam TransactionType type,
+            @RequestParam int year,
+            @RequestParam Integer budgetId,
+            @Nullable @RequestParam Integer departmentId
+    ) {
+        log.info("getAll {}, {}, {}, {}", type, year, budgetId, departmentId);
         List<Transaction> transactions;
 
         if (departmentId != null) {
-            transactions = transactionRepository.getAllByDepartmentId(departmentId);
+            transactions = transactionRepository.findAllByPaymentDateYearAndDepartmentId(year, departmentId);
         } else {
-            transactions = transactionRepository.findAll();
+            transactions = transactionRepository.findAllByPaymentDateYear(year);
         }
 
         Map<Integer, BigDecimal[]> transactionMonths = getTransactionMonths(transactions);

@@ -78,30 +78,32 @@ public class ReportUtility {
         BigDecimal[] operExpenses = calcExpense(
                 months,
                 transaction ->
-                        (transaction.getKey() > 26 && transaction.getKey() < 35) ||
-                        (transaction.getKey() > 36 && transaction.getKey() < 40)
+                        Arrays.asList(new Integer[]{28, 29, 30, 31, 32, 34, 38, 39})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] salaries = calcExpense(
                 months,
                 transaction ->
-                        (transaction.getKey() > 33 && transaction.getKey() < 37)
+                        Arrays.asList(new Integer[]{34, 35, 36})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] taxes = calcExpense(
                 months,
                 transaction ->
-                        (transaction.getKey() == 26) || (transaction.getKey() > 34 && transaction.getKey() < 37)
+                        Arrays.asList(new Integer[]{26, 35, 36})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] percents = calcExpense(
                 months,
                 transaction ->
-                        (transaction.getKey() > 60 && transaction.getKey() < 64) ||
-                                (transaction.getKey() > 66 && transaction.getKey() < 70)
+                        Arrays.asList(new Integer[]{62, 63, 68, 69})
+                                .contains(transaction.getKey())
         );
 
-        return new BigDecimal[][] {operExpenses, salaries, taxes, percents};
+        return new BigDecimal[][]{operExpenses, salaries, taxes, percents};
     }
 
     private static BigDecimal[] calcExpense(Map<Integer, BigDecimal[]> items, Predicate<Map.Entry<Integer, BigDecimal[]>> filterExpenses) {
@@ -122,50 +124,45 @@ public class ReportUtility {
     public static BigDecimal[][] calcProfits(Map<Integer, BigDecimal[]> months) {
         BigDecimal[] operProfit = calcProfit(
                 months,
-                transaction -> (transaction.getKey() > 0 && transaction.getKey() < 21),
-                transaction -> (transaction.getKey() > 26 && transaction.getKey() < 40)
+                transaction ->
+                        Arrays.asList(new Integer[]{3, 4, 5, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20})
+                                .contains(transaction.getKey()),
+                transaction ->
+                        Arrays.asList(new Integer[]{28, 29, 30, 31, 32, 34, 35, 36, 38, 39})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] ebitda = calcProfit(
                 months,
                 transaction ->
-                        (transaction.getKey() > 0 && transaction.getKey() < 26) ||
-                                (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                        Arrays.asList(new Integer[]{3, 4, 5, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 22, 23, 25, 50, 51, 52, 53, 54, 56, 57, 59, 60, 65, 66})
+                                .contains(transaction.getKey()),
                 transaction ->
-                        (transaction.getKey() > 26 && transaction.getKey() < 32) ||
-                                (transaction.getKey() > 32 && transaction.getKey() < 40) ||
-                                (transaction.getKey() > 39 && transaction.getKey() < 49) ||
-                                (transaction.getKey() > 66 && transaction.getKey() < 70)
+                        Arrays.asList(new Integer[]{28, 29, 30, 31, 34, 35, 36, 38, 39, 41, 42, 43, 44, 45, 47, 48})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] finProfit = calcProfit(
                 months,
                 transaction ->
-                        (transaction.getKey() > 0 && transaction.getKey() < 26) ||
-                                (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                        Arrays.asList(new Integer[]{3, 4, 5, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 22, 23, 25, 50, 51, 52, 53, 54, 56, 57, 59, 60, 65, 66})
+                                .contains(transaction.getKey()),
                 transaction ->
-                        (transaction.getKey() > 26 && transaction.getKey() < 40) ||
-                                (transaction.getKey() > 39 && transaction.getKey() < 49) ||
-                                (transaction.getKey() > 60 && transaction.getKey() < 64) ||
-                                (transaction.getKey() > 66 && transaction.getKey() < 70)
+                        Arrays.asList(new Integer[]{28, 29, 30, 31, 32, 34, 35, 36, 38, 39, 41, 42, 43, 44, 45, 47, 48, 62, 63, 68, 69})
+                                .contains(transaction.getKey())
         );
 
         BigDecimal[] netProfit = calcProfit(
                 months,
                 transaction ->
-                        (transaction.getKey() > 0 && transaction.getKey() < 26) ||
-                                (transaction.getKey() > 48 && transaction.getKey() < 61) ||
-                                (transaction.getKey() > 63 && transaction.getKey() < 67),
+                        Arrays.asList(new Integer[]{3, 4, 5, 7, 8, 9, 10, 13, 14, 15, 17, 18, 19, 20, 22, 23, 25, 50, 51, 52, 53, 54, 56, 57, 59, 60, 65, 66})
+                                .contains(transaction.getKey()),
                 transaction ->
-                        (transaction.getKey() > 25 && transaction.getKey() < 40) ||
-                                (transaction.getKey() > 39 && transaction.getKey() < 49) ||
-                                (transaction.getKey() > 60 && transaction.getKey() < 64) ||
-                                (transaction.getKey() > 66 && transaction.getKey() < 70)
+                        Arrays.asList(new Integer[]{26, 28, 29, 30, 31, 32, 34, 35, 36, 38, 39, 41, 42, 43, 44, 45, 47, 48, 62, 63, 68, 69})
+                                .contains(transaction.getKey())
         );
 
-        return new BigDecimal[][] {operProfit, ebitda, finProfit, netProfit};
+        return new BigDecimal[][]{operProfit, ebitda, finProfit, netProfit};
     }
 
     private static BigDecimal[] calcProfit(

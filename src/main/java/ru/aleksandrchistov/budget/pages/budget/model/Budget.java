@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import ru.aleksandrchistov.budget.common.model.BaseEntity;
@@ -32,6 +33,12 @@ public class Budget extends BaseEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "department_id")
     private Integer departmentId;
+
+    @Min(2024)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ColumnDefault("EXTRACT(year FROM CURRENT_DATE)")
+    @Column(name = "year")
+    private int year;
 
     public Budget(Budget acc) {
         this(acc.id, acc.name, acc.departmentId);

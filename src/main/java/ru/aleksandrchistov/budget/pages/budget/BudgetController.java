@@ -54,20 +54,20 @@ public class BudgetController {
     private BudgetPlanRepository planRepository;
 
     @GetMapping(path = "/names")
-    public List<Budget> getNames(@Nullable @RequestParam Integer departmentId) {
+    public List<Budget> getNames(@RequestParam int year, @Nullable @RequestParam Integer departmentId) {
         log.info("getNames");
         if (departmentId == null) {
-            return repository.findAll();
+            return repository.findAllByYear(year);
         }
-        return repository.getAllByDepartmentId(departmentId);
+        return repository.getAllByYearAndDepartmentId(year, departmentId);
     }
 
     @GetMapping
-    public BudgetDto getAll(@RequestParam BudgetType type, @RequestParam Integer budgetId) {
+    public BudgetDto getAll(@RequestParam BudgetType type, @RequestParam int year, @RequestParam Integer budgetId) {
         log.info("getAll");
         List<BudgetItem> items = itemRepository.getAllByTypeOrderByIdDesc(type);
         List<Transaction> transactions  = transactionRepository.getAllByBudgetItemIdBetween(
-                2024, // TODO: replace with request param in the future
+                year,
                 items.getLast().getId(),
                 items.getFirst().getId()
         );

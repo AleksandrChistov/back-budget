@@ -17,4 +17,9 @@ public interface TransactionRepository extends BaseRepository<Transaction> {
     @Query("SELECT t FROM Transaction t WHERE extract(year from t.paymentDate) = :year AND t.budgetItem.id BETWEEN :from AND :to ORDER BY t.budgetItem.id desc")
     List<Transaction> getAllByBudgetItemIdBetween(int year, @Min(1) int from, @Min(1) int to);
 
+    @Query("SELECT t FROM Transaction t WHERE extract(year from t.paymentDate) = :year ORDER BY t.budgetItem.id desc")
+    List<Transaction> findAllByPaymentDateYear(int year);
+
+    @Query("SELECT t FROM Transaction t WHERE extract(year from t.paymentDate) = :year AND t.departmentId = :departmentId ORDER BY t.budgetItem.id desc")
+    List<Transaction> findAllByPaymentDateYearAndDepartmentId(int year, @Min(1) Integer departmentId);
 }
