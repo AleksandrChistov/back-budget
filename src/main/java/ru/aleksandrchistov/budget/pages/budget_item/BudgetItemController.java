@@ -5,15 +5,13 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.aleksandrchistov.budget.shared.model.BudgetType;
 import ru.aleksandrchistov.budget.pages.transaction.TransactionType;
+import ru.aleksandrchistov.budget.shared.model.BudgetType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
+import static ru.aleksandrchistov.budget.pages.budget_item.BudgetItemUtility.buildDtoList;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
@@ -40,30 +38,7 @@ public class BudgetItemController {
         } else {
             items = repository.findAll();
         }
-        return budgetItemDtoList(items);
+        return buildDtoList(items);
     }
 
-    private List<BudgetItemDto> budgetItemDtoList(List<BudgetItem> items) {
-        Map<Integer, BudgetItemDto> itemMap = new HashMap<>();
-        List<BudgetItemDto> rootItems = new ArrayList<>();
-
-        for (BudgetItem item : items) {
-            itemMap.put(item.getId(), new BudgetItemDto(item.id(), item.getName()));
-        }
-
-        for (BudgetItem item : items) {
-            if (item.getParentId() == null) {
-                BudgetItemDto itemDto = itemMap.get(item.getId());
-                rootItems.add(itemDto);
-            } else {
-                if (itemMap.containsKey(item.getParentId())) {
-                    BudgetItemDto parent = itemMap.get(item.getParentId());
-                    BudgetItemDto child = itemMap.get(item.getId());
-                    parent.addChild(child);
-                }
-            }
-        }
-
-        return rootItems;
-    }
 }
