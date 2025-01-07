@@ -50,6 +50,13 @@ public class Budget extends BaseEntity {
         setDepartmentId(departmentId);
     }
 
+    public Budget(Integer id, String name, Integer departmentId, int year) {
+        super(id);
+        setName(name);
+        setDepartmentId(departmentId);
+        setYear(year);
+    }
+
     @Override
     public String toString() {
         return "Budget{" +

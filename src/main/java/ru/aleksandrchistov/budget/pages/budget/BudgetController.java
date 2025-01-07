@@ -26,10 +26,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.aleksandrchistov.budget.common.validation.RestValidation.assureIdConsistent;
-import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getNewPlansFromDto;
+import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getNewPlansFromItems;
 import static ru.aleksandrchistov.budget.pages.budget.util.CreateBudgetUtility.getUpdatedBudgetMonths;
 import static ru.aleksandrchistov.budget.pages.budget.util.GetBudgetUtility.*;
 
@@ -56,9 +57,6 @@ public class BudgetController {
     @GetMapping(path = "/names")
     public List<Budget> getNames(@RequestParam int year, @Nullable @RequestParam Integer departmentId) {
         log.info("getNames");
-        if (departmentId == null) {
-            return repository.findAllByYear(year);
-        }
         return repository.getAllByYearAndDepartmentId(year, departmentId);
     }
 
@@ -82,26 +80,32 @@ public class BudgetController {
 
     @Transactional
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> create(@Valid @RequestBody BudgetDto budgetDto) {
-        log.info("create {}", budgetDto);
-        // TODO: check where we pass departmentId ?
-        List<Budget> budgets = repository.getAllByDepartmentId(budgetDto.getDepartmentId());
+    public ResponseEntity<Integer> create(@RequestBody Map<String, Integer> body) {
+        Integer departmentId = body.get("departmentId");
+        log.info("create with departmentId = {}", departmentId);
+
+        List<Budget> budgets = (departmentId != null) ? repository.getAllByDepartmentId(departmentId) : repository.findAllByYear(LocalDate.now().getYear());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         Budget newBudget = new Budget(
                 null,
                 "Версия №" + (budgets.size() + 1) + " от " + LocalDate.now().format(formatter),
-                budgetDto.getDepartmentId()
+                departmentId,
+                LocalDate.now().getYear()
         );
 
         Budget createdBudget = repository.save(newBudget);
-        List<BudgetMonth> plans = getNewPlansFromDto(budgetDto, createdBudget.getId(), itemRepository);
+
+        List<BudgetItem> items = itemRepository.findAll();
+
+        List<BudgetMonth> plans = getNewPlansFromItems(createdBudget.getId(), items);
 
         planRepository.saveAll(plans);
 
-        return new ResponseEntity<>(newBudget.getId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(createdBudget.getId(), HttpStatus.CREATED);
     }
 
+    @Transactional
     @PutMapping(value = "/{budgetId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody BudgetDto budgetDto, @PathVariable int budgetId) {
