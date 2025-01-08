@@ -1,7 +1,10 @@
 target/
+/src/main/resources/static/templates/
+/src/main/resources/static/uploads/
 
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
+
