@@ -1,5 +1,9 @@
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 spring:
+  web:
+    resources:
+      static-locations[0]: file:src/main/resources/static/
+      static-locations[1]: classpath:/static/
   jpa:
     show-sql: true
     open-in-view: false
@@ -22,3 +26,8 @@ spring:
 logging:
   level:
     web: debug
+file:
+  upload:
+    location: ./src/main/resources/static/uploads
+  template:
+    location: ./src/main/resources/static/templates
