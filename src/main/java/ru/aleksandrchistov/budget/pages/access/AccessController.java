@@ -1,5 +1,6 @@
 package ru.aleksandrchistov.budget.pages.access;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,11 @@ public class AccessController {
     private AccessRepository repository;
 
     @GetMapping
-    public List<User> getAll() {
-        log.info("getAll");
+    public List<User> getAll(@Nullable @RequestParam String email, @Nullable @RequestParam String password) {
+        log.info("getAll {} {}", email, password);
+        if (email != null && password != null) {
+            return repository.findByEmailAndPassword(email, password);
+        }
         return repository.findAll();
     }
 
