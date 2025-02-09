@@ -3,6 +3,8 @@ package ru.aleksandrchistov.budget.pages.files.util;
 import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.aleksandrchistov.budget.pages.budget.dto.BudgetDataDto;
 import ru.aleksandrchistov.budget.pages.budget.dto.BudgetDataMonthDto;
 
@@ -15,11 +17,12 @@ import java.util.HashMap;
 
 @UtilityClass
 public class FileToExcelUtility {
+    private static final Logger logger = LoggerFactory.getLogger(FileToExcelUtility.class);
 
     private static int currentBudgetItemId;
     private static int currentMonth = 0;
 
-    public static void writeToExcel(Path path, HashMap<Integer, BudgetDataDto> planDtos, HashMap<Integer, BigDecimal[]> transactionMonths) {
+    public static void writeToExcel(Path path, HashMap<Integer, BudgetDataDto> planDtos) {
         try {
             FileInputStream inputStream = new FileInputStream(String.valueOf(path));
             Workbook workbook = new XSSFWorkbook(inputStream);
@@ -42,12 +45,12 @@ public class FileToExcelUtility {
             try (FileOutputStream out = new FileOutputStream(path.toString())) {
                 workbook.write(out);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
 
             inputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
     }
 

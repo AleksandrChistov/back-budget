@@ -25,19 +25,19 @@ public class AccessController {
     protected final Logger log = getLogger(getClass());
 
     @Autowired
-    private AccessRepository accessRepository;
+    private AccessRepository repository;
 
     @GetMapping
     public List<User> getAll() {
         log.info("getAll");
-        return accessRepository.findAll();
+        return repository.findAll();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createAccess(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         log.info("create {}", user);
         checkNew(user);
-        User created = accessRepository.save(user);
+        User created = repository.save(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL)
                 .buildAndExpand(created.getId()).toUri();
@@ -46,9 +46,9 @@ public class AccessController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAccess(@PathVariable Integer id) {
+    public void delete(@PathVariable Integer id) {
         log.info("delete {}", id);
-        if (accessRepository.delete(id) == 0) {
+        if (repository.delete(id) == 0) {
             throw new NotFoundException("Entity with id=" + id + " not found");
         }
     }

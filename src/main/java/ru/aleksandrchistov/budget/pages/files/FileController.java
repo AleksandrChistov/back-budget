@@ -77,8 +77,12 @@ public class FileController {
 
         Path dfile = fileSystemStorage.copyFile(getTemplateNameByBudgetType(type));
 
-        writeToExcel(dfile, planDtos, transactionMonths);
+        writeToExcel(dfile, planDtos);
 
+        return getPathToFile(dfile);
+    }
+
+    private static String getPathToFile(Path dfile) {
         return "http://localhost:8080/uploads/" + dfile.getFileName();
     }
 

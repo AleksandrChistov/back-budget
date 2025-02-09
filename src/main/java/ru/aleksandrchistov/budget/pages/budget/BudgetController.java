@@ -64,7 +64,7 @@ public class BudgetController {
     public BudgetDto getAll(@RequestParam BudgetType type, @RequestParam int year, @RequestParam Integer budgetId) {
         log.info("getAll");
         List<BudgetItem> items = itemRepository.getAllByTypeOrderByIdDesc(type);
-        List<Transaction> transactions  = transactionRepository.getAllByBudgetItemIdBetween(
+        List<Transaction> transactions = transactionRepository.getAllByBudgetItemIdBetween(
                 year,
                 items.getLast().getId(),
                 items.getFirst().getId()
@@ -84,7 +84,9 @@ public class BudgetController {
         Integer departmentId = body.get("departmentId");
         log.info("create with departmentId = {}", departmentId);
 
-        List<Budget> budgets = (departmentId != null) ? repository.getAllByDepartmentId(departmentId) : repository.findAllByYear(LocalDate.now().getYear());
+        List<Budget> budgets = (departmentId != null) ?
+                repository.getAllByDepartmentId(departmentId) :
+                repository.findAllByYear(LocalDate.now().getYear());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         Budget newBudget = new Budget(

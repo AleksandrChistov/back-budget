@@ -49,6 +49,13 @@ class AccessControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void deleteAccess() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + manager.id()))
+                .andExpect(status().isNoContent());
+        USER_MATCHER.assertMatch(accessRepository.findAll(), admin, analyst);
+    }
+
+    @Test
     void createAccessInvalid() throws Exception {
         User newUser = new User(null, null, "email@mail.ru", "pass", Role.ANALYST);
         perform(MockMvcRequestBuilders.post(REST_URL)
@@ -57,12 +64,6 @@ class AccessControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnprocessableEntity());
     }
 
-    @Test
-    void deleteAccess() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + "/" + manager.id()))
-                .andExpect(status().isNoContent());
-        USER_MATCHER.assertMatch(accessRepository.findAll(), admin, analyst);
-    }
 
     @Test
     void deleteAccessInvalid() throws Exception {
