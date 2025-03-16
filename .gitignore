@@ -1,6 +1,7 @@
 target/
 /src/main/resources/static/templates/
 /src/main/resources/static/uploads/
+/src/main/resources/application.properties
 
 ### IntelliJ IDEA ###
 .idea

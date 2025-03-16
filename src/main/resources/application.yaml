@@ -18,8 +18,8 @@ spring:
         id.new_generator_mappings: false
   datasource:
     url: jdbc:postgresql://localhost:5432/budgets
-    username: admin
-    password: 123
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
   sql:
     init:
       mode: always
