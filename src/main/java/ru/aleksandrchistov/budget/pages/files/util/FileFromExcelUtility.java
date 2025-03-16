@@ -4,13 +4,13 @@ import lombok.experimental.UtilityClass;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
+import ru.aleksandrchistov.budget.common.error.DataConflictException;
 import ru.aleksandrchistov.budget.common.error.NotFoundException;
 import ru.aleksandrchistov.budget.pages.budget.model.BudgetMonth;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class FileFromExcelUtility {
@@ -38,7 +38,7 @@ public class FileFromExcelUtility {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new DataConflictException(e.getMessage());
         }
     }
 
@@ -64,7 +64,7 @@ public class FileFromExcelUtility {
     private static List<BudgetMonth> filterPlansByBudgetItemId(List<BudgetMonth> plans, int budgetItemId) {
         List<BudgetMonth> found = plans.stream()
                 .filter(plan -> plan.getBudgetItem().getId().equals(budgetItemId))
-                .collect(Collectors.toList());
+                .toList();
         if (found.isEmpty()) {
             throw new NotFoundException("Budget plans with budget item ID " + budgetItemId + " not found");
         }
