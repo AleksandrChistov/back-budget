@@ -19,7 +19,7 @@ import ru.aleksandrchistov.budget.common.model.BaseEntity;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     @NotBlank
     @Size(min = 2, max = 256)
@@ -42,11 +42,11 @@ public class User extends BaseEntity {
     @Column(name = "role", nullable = false, length = 10)
     private Role role;
 
-    public User(User u) {
+    public UserEntity(UserEntity u) {
         this(u.id, u.fullName, u.email, u.password, u.role);
     }
 
-    public User(Integer id, String fullName, String email, String password, Role role) {
+    public UserEntity(Integer id, String fullName, String email, String password, Role role) {
         super(id);
         this.fullName = fullName;
         this.email = email;

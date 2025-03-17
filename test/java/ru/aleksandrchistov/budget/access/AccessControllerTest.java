@@ -9,7 +9,7 @@ import ru.aleksandrchistov.budget.AbstractControllerTest;
 import ru.aleksandrchistov.budget.common.util.JsonUtil;
 import ru.aleksandrchistov.budget.pages.access.AccessRepository;
 import ru.aleksandrchistov.budget.pages.access.Role;
-import ru.aleksandrchistov.budget.pages.access.User;
+import ru.aleksandrchistov.budget.pages.access.UserEntity;
 
 import java.util.List;
 
@@ -33,14 +33,14 @@ class AccessControllerTest extends AbstractControllerTest {
 
     @Test
     void createAccess() throws Exception {
-        User newUser = getNew();
+        UserEntity newUser = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(AccessTestData.jsonWithPassword(newUser, newUser.getPassword())))
                 .andDo(print())
                 .andExpect(status().isCreated());
 
-        User created = USER_MATCHER.readFromJson(action);
+        UserEntity created = USER_MATCHER.readFromJson(action);
         int newId = created.id();
         newUser.setId(newId);
 
@@ -57,7 +57,7 @@ class AccessControllerTest extends AbstractControllerTest {
 
     @Test
     void createAccessInvalid() throws Exception {
-        User newUser = new User(null, null, "email@mail.ru", "pass", Role.ANALYST);
+        UserEntity newUser = new UserEntity(null, null, "email@mail.ru", "pass", Role.ANALYST);
         perform(MockMvcRequestBuilders.post(REST_URL)
         .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newUser)))

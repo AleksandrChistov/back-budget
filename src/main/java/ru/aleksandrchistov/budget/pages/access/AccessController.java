@@ -29,7 +29,7 @@ public class AccessController {
     private AccessRepository repository;
 
     @GetMapping
-    public List<User> getAll(@Nullable @RequestParam String email, @Nullable @RequestParam String password) {
+    public List<UserEntity> getAll(@Nullable @RequestParam String email, @Nullable @RequestParam String password) {
         log.info("getAll {} {}", email, password);
         if (email != null && password != null) {
             return repository.findByEmailAndPassword(email, password);
@@ -38,10 +38,10 @@ public class AccessController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@Valid @RequestBody User user) {
+    public ResponseEntity<UserEntity> create(@Valid @RequestBody UserEntity user) {
         log.info("create {}", user);
         checkNew(user);
-        User created = repository.save(user);
+        UserEntity created = repository.save(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL)
                 .buildAndExpand(created.getId()).toUri();
