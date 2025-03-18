@@ -1,9 +1,10 @@
 package ru.aleksandrchistov.budget.pages.access;
 
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
 
 @Getter
-public enum Role {
+public enum Role implements GrantedAuthority {
     ADMIN("Админ"),
     MANAGER("Менеджер"),
     ANALYST("Аналитик");
@@ -21,5 +22,11 @@ public enum Role {
             }
         }
         throw new IllegalArgumentException("No constant with text " + text + " found");
+    }
+
+    @Override
+    public String getAuthority() {
+        //   https://stackoverflow.com/a/19542316/548473
+        return "ROLE_" + name();
     }
 }

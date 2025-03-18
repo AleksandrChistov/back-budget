@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.aleksandrchistov.budget.pages.access.Role;
 
 import java.util.Arrays;
 
@@ -67,7 +68,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/public/**").permitAll()
-                        .requestMatchers("/api/accesses/**").hasRole("ADMIN")
+                        .requestMatchers("/api/accesses/**").hasRole(Role.ADMIN.name())
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 );
