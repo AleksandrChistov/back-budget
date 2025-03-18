@@ -1,7 +1,7 @@
 INSERT INTO accesses (full_name, email, password, role)
-VALUES ('Иванов Иван Иванович', 'admin@yandex.ru', '{noop}admin', 'ADMIN'),
-       ('Петров Петр Петрович', 'manager@yandex.ru', '{noop}manager', 'MANAGER'),
-       ('Маринова Марина Мариновна', 'analyst@yandex.ru', '{noop}analyst', 'ANALYST');
+VALUES ('Иванов Иван Иванович', 'admin@yandex.ru', '$2a$10$3Z8ja2sbGKGxPRjvqYixnu8048Legk6Jth5pzZt4hh.3BQupil3su', 'ADMIN'),
+       ('Петров Петр Петрович', 'manager@yandex.ru', '$2a$10$XEccp4.8j5BVdqu0DPjeJuPH2mcqufLLP.GIRQpD9DLydvcEzodfG', 'MANAGER'),
+       ('Маринова Марина Мариновна', 'analyst@yandex.ru', '$2a$10$HucaTzNbTqq0xCOqrkJxluw.8esovHzXAF8B0kedmdk.gU8OEi7ma', 'ANALYST');
 
 INSERT INTO departments (name)
 VALUES ('Главный офис №1 г. Москва'),
